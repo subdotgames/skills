@@ -1,0 +1,33 @@
+{
+  "name": "subgames-plugin",
+  "owner": {
+    "name": "OpusGameLabs"
+  },
+  "metadata": {
+    "description": "sub.games SDK integration skill for Claude Code — tier-gating, auth, and subscribe prompts for browser games",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "subgames",
+      "source": "./",
+      "description": "Integrate sub.games subscriptions into browser games with the @subgames/sdk",
+      "version": "1.0.0",
+      "author": {
+        "name": "Opus Game Labs"
+      },
+      "homepage": "https://sub.games",
+      "repository": "https://github.com/OpusGameLabs/subgames-monorepo",
+      "license": "MIT",
+      "keywords": [
+        "games",
+        "subscriptions",
+        "tier-gating",
+        "sdk",
+        "monetization",
+        "sub.games"
+      ],
+      "category": "development"
+    }
+  ]
+}

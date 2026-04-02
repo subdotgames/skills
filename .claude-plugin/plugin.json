@@ -1,0 +1,13 @@
+{
+  "name": "subgames",
+  "version": "1.0.0",
+  "description": "Integrate sub.games subscriptions into browser games — tier-gating, auth, and subscribe prompts via the @subgames/sdk",
+  "author": {
+    "name": "Opus Game Labs",
+    "url": "https://sub.games"
+  },
+  "homepage": "https://sub.games/docs",
+  "repository": "https://github.com/OpusGameLabs/subgames-monorepo",
+  "license": "MIT",
+  "keywords": ["games", "subscriptions", "tier-gating", "sdk", "monetization"]
+}
