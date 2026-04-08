@@ -79,14 +79,14 @@ Add before `</head>` in `index.html`:
 <script src="https://sdk.sub.games/sdk.js"></script>
 ```
 
-The SDK will be available as `window.SubGamesSDK`.
+The CDN bundle is available as `window.SubGames.SubGamesSDK`.
 
 ### Step 3: Initialize the SDK
 
 Add initialization to the game's entry point. The SDK needs a `gameKey` — the game's slug on sub.games.
 
 ```js
-const subgames = SubGamesSDK.init({
+const subgames = SubGames.SubGamesSDK.init({
   gameKey: 'your-game-slug',
   overlay: true,
 });

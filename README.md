@@ -66,7 +66,7 @@ subgames.on('unpause', () => { /* resume game loop */ });
 ```html
 <script src="https://sdk.sub.games/sdk.js"></script>
 <script>
-  const subgames = SubGamesSDK.init({
+  const subgames = SubGames.SubGamesSDK.init({
     gameKey: 'your-game-slug',
     overlay: true,
   });
