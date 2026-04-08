@@ -24,14 +24,14 @@ if [ -f "$DIR/package.json" ]; then
     check_pass "@subgames/sdk found in package.json"
   else
     # Check for CDN script tag
-    if grep -rq 'cdn.sub.games/sdk' "$DIR"/*.html "$DIR"/index.html 2>/dev/null; then
+    if grep -rq 'sdk.sub.games/sdk' "$DIR"/*.html "$DIR"/index.html 2>/dev/null; then
       check_pass "SDK loaded via CDN script tag"
     else
       check_fail "@subgames/sdk not found in package.json or as CDN script tag"
     fi
   fi
 else
-  if grep -rq 'cdn.sub.games/sdk' "$DIR"/*.html 2>/dev/null; then
+  if grep -rq 'sdk.sub.games/sdk' "$DIR"/*.html 2>/dev/null; then
     check_pass "SDK loaded via CDN script tag (no package.json)"
   else
     check_fail "No package.json and no CDN script tag found"
