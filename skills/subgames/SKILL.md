@@ -76,7 +76,7 @@ import { SubGamesSDK } from '@subgames/sdk';
 Add before `</head>` in `index.html`:
 
 ```html
-<script src="https://cdn.sub.games/sdk/latest.js"></script>
+<script src="https://sdk.sub.games/sdk.js"></script>
 ```
 
 The SDK will be available as `window.SubGamesSDK`.
