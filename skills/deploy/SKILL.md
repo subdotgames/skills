@@ -1,8 +1,8 @@
 ---
 name: deploy
-description: Deploy a browser game to here.now and register it on sub.games. This is an internal skill used after /subgames SDK integration completes — do not invoke for general deployment. Triggers automatically when sub.games SDK integration finishes and the game needs to be deployed and registered.
+description: Deploy a browser game to GitHub Pages and register it on sub.games. This is an internal skill used after /subgames SDK integration completes — do not invoke for general deployment. Triggers automatically when sub.games SDK integration finishes and the game needs to be deployed and registered.
 allowed-tools: ["Bash", "Read", "Write", "Edit", "Glob", "Grep", "WebFetch"]
-compatibility: Requires internet access. Uses the here-now skill for hosting and the sub.games API for game registration.
+compatibility: Requires internet access and GitHub CLI authentication. Uses GitHub Pages for hosting and the sub.games API for game registration.
 metadata:
   author: Opus Game Labs
   version: 1.0.0
@@ -10,7 +10,7 @@ metadata:
 
 # Deploy & Register on sub.games
 
-Deploy a sub.games-integrated browser game to here.now and register it on the platform. This skill runs after `/subgames` SDK integration is complete.
+Deploy a sub.games-integrated browser game to GitHub Pages and register it on the platform. This skill runs after `/subgames` SDK integration is complete.
 
 **Only use this for vanilla/CDN browser games** (no server SDK). If the game uses `@subgames/server-sdk`, the creator handles their own hosting and registration.
 
@@ -26,33 +26,33 @@ If there's no build step (plain HTML game), skip to Step 2.
 
 Identify the output directory — usually `dist/` for Vite/webpack or the project root for plain HTML.
 
-### Step 2: Deploy to here.now
+### Step 2: Deploy to GitHub Pages
 
-Check if the `here-now` skill is available:
-
-```bash
-ls ~/.agents/skills/here-now/scripts/publish.sh 2>/dev/null && echo "here-now available" || echo "not installed"
-```
-
-**If here-now is available:**
+Check that GitHub CLI is available and authenticated:
 
 ```bash
-~/.agents/skills/here-now/scripts/publish.sh <output-directory>/
+gh auth status
 ```
 
-This returns a live URL like `https://<slug>.here.now/`.
-
-**If here-now is NOT available**, try npx:
+If not authenticated, run:
 
 ```bash
-npx @anthropic-ai/here-now publish <output-directory>/
+gh auth login
 ```
 
-**CRITICAL**: Tell the user about the 24-hour claim window:
+Create or reuse a public GitHub repo for the static build, push the files, and enable GitHub Pages from the branch root:
 
-> Your game is live at `https://<slug>.here.now/`
->
-> **IMPORTANT**: Anonymous deploys expire in 24 hours. Visit the claim URL shown above to create a free here.now account and keep the site permanently. The claim token is only shown once.
+```bash
+cd <output-directory>
+git init
+git add .
+git commit -m "Deploy game"
+gh repo create <repo-name> --public --source=. --push
+BRANCH=$(git branch --show-current)
+OWNER=$(gh api user --jq '.login')
+gh api repos/$OWNER/<repo-name>/pages -X POST --input - <<< "{\"build_type\":\"legacy\",\"source\":{\"branch\":\"$BRANCH\",\"path\":\"/\"}}"
+gh api repos/$OWNER/<repo-name>/pages --jq '.html_url'
+```
 
 Save the deployed URL for Step 3.
 
@@ -71,7 +71,27 @@ const subgames = SubGamesSDK.init({
 
 Rebuild and redeploy if the gameKey changed.
 
-### Step 4: Register on sub.games
+### Step 4: Verify embeddability
+
+Before registering, confirm the deployed site can be embedded by sub.games:
+
+```bash
+curl -I <deployed-url>
+```
+
+If the response includes `X-Frame-Options: DENY`, `X-Frame-Options: SAMEORIGIN`, or a `Content-Security-Policy` `frame-ancestors` rule that excludes `sub.games`, stop and tell the creator GitHub Pages is not embeddable for this project and they need a different host.
+
+### Step 5: Capture a real screenshot for registration
+
+Do not use a blank placeholder image. Capture the actual deployed game with Playwright:
+
+```bash
+npx playwright screenshot <deployed-url> /tmp/subgames-registration.png
+```
+
+Use the saved screenshot as the `image` in the registration request.
+
+### Step 6: Register on sub.games
 
 **Check for stored credentials:**
 
@@ -92,17 +112,15 @@ This opens the browser to sub.games where the creator logs in. Credentials are s
 ```bash
 AUTH_HEADER=$(node scripts/subgames-auth.js hmac POST /games)
 curl -X POST https://api.sub.games/games \
-  -H "Content-Type: application/json" \
   -H "Authorization: $AUTH_HEADER" \
-  -d '{
-    "name": "<game-name>",
-    "description": "<game-description>",
-    "gameUrl": "<deployed-here-now-url>",
-    "platform": "WEB",
-    "isHTMLGame": true,
-    "iframable": true,
-    "visibility": "public"
-  }'
+  -F "name=<game-name>" \
+  -F "description=<game-description>" \
+  -F "gameUrl=<deployed-url>" \
+  -F "platform=web" \
+  -F "isHtmlGame=true" \
+  -F "iframable=true" \
+  -F "visibility=public" \
+  -F "image=@/tmp/subgames-registration.png;type=image/png"
 ```
 
 The response includes the game's `id` and `gameKey`. Update the SDK init call if the returned `gameKey` differs from what was set.
@@ -116,13 +134,13 @@ The response includes the game's `id` and `gameKey`. Update the SDK init call if
 > 4. Set the game name, description, and visibility
 > 5. Copy the gameKey and update your SDK init if needed
 
-### Step 5: Confirm
+### Step 7: Confirm
 
 Tell the creator:
 
 > Your game is deployed and registered!
 >
-> **Live URL**: `<here-now-url>`
+> **Live URL**: `<github-pages-url>`
 > **sub.games page**: `https://sub.games/game/<game-id>` (or check your dashboard at https://sub.games/publish)
 > **Creator page**: `https://sub.games/@your-handle`
 >
@@ -130,14 +148,15 @@ Tell the creator:
 
 ## Troubleshooting
 
-### here-now publish fails
-- Check internet connection
-- Verify the output directory exists and contains `index.html`
-- Try `npx serve <output-dir>` locally first to confirm the build works
+### GitHub Pages deploy fails
+- Check `gh auth status`
+- Verify the repo is public if you're using free Pages
+- Verify the output directory contains `index.html`
+- Wait 1-2 minutes for Pages to finish building after enablement
 
 ### API registration fails with 401
 - Token may be expired — get a fresh one from the sub.games dashboard
-- Ensure the `Authorization` header uses `Bearer <token>` format
+- Regenerate the HMAC header immediately before the request
 
 ### Game loads but SDK doesn't connect
 - Verify the `gameKey` matches what's registered on sub.games

@@ -197,7 +197,7 @@ This checks: SDK installed, `init()` call present, `gameKey` configured, pause/u
 
 ### Step 8: Deploy and register (vanilla/CDN games only)
 
-If the game is a **vanilla browser game** (no server SDK, no existing hosting), recommend deploying to here.now and registering on sub.games. Use the `deploy` skill to handle this — it deploys to here.now and walks through sub.games registration.
+If the game is a **vanilla browser game** (no server SDK, no existing hosting), default to deploying it to GitHub Pages and registering it on sub.games once the integration passes validation. Use the `deploy` skill to handle this unless the creator explicitly says not to deploy yet.
 
 If the game **already has hosting** or uses the **server SDK**, skip to Step 9 and tell the creator to register manually at https://sub.games/publish.
 
@@ -212,7 +212,7 @@ Tell the creator what's active and the tier breakdown:
 > **Tiers:** [list each tier and its gated features]
 >
 > **Next steps:**
-> - If not deployed yet: ask me to deploy to here.now and register on sub.games
+> - If this is a local vanilla browser game and the creator did not opt out, proceed directly to deployment on GitHub Pages and sub.games registration
 > - If already hosted: register at https://sub.games/publish and set your gameKey
 > - Share your creator page: `https://sub.games/@your-handle`
 

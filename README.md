@@ -17,7 +17,7 @@ npx skills add subdotgames/skills
 | Skill | Description |
 |-------|-------------|
 | [sub.games SDK Integration](skills/subgames/SKILL.md) | Add the `@subgames/sdk` to a browser game, set up tier-gating, pause/unpause handling, and sparkle markers |
-| [Deploy & Register](skills/deploy/SKILL.md) | Deploy a game to here.now and register it on sub.games |
+| [Deploy & Register](skills/deploy/SKILL.md) | Deploy a game to GitHub Pages and register it on sub.games |
 
 ### References
 
