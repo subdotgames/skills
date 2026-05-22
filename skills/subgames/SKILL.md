@@ -5,7 +5,7 @@ argument-hint: "[path to game directory, or leave blank to use current dir]"
 allowed-tools: ["Bash", "Read", "Write", "Edit", "Glob", "Grep", "WebFetch"]
 compatibility: Browser games using Phaser, Three.js, Pixi.js, vanilla Canvas, or plain HTML. Requires npm or a script tag (CDN). Node.js 20+ for npm installs.
 metadata:
-  author: Opus Game Labs
+  author: Playable Intelligence
   version: 1.0.0
 license: MIT
 ---
