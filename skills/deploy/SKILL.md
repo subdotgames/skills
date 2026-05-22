@@ -4,7 +4,7 @@ description: Deploy a browser game to GitHub Pages and register it on sub.games.
 allowed-tools: ["Bash", "Read", "Write", "Edit", "Glob", "Grep", "WebFetch"]
 compatibility: Requires internet access and GitHub CLI authentication. Uses GitHub Pages for hosting and the sub.games API for game registration.
 metadata:
-  author: Opus Game Labs
+  author: Playable Intelligence
   version: 1.0.0
 ---
 
